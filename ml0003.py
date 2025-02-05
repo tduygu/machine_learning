@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # veri yukleme
-datas = pd.read_csv('files/eksikveriler.csv')
+datas = pd.read_csv('files/veriler.csv')
 
 # veri on isleme
 print(datas)
@@ -11,14 +11,16 @@ print(datas[['yas']])
 
 # kategorik veriler
 
+countries = datas.iloc[:,0:1].values
+print(countries)
 
-#sci kit
-# from sklearn.impute import SimpleImputer
-# imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-# yas = datas.iloc[:,1:4].values
-# print(yas)
-# #ogren
-# imputer = imputer.fit(yas[:,1:4])
-# #ortalama deger olarak yerine koy
-# yas[:,1:4]=imputer.transform(yas[:,1:4])
-# print(yas)
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+countries[:,0] = le.fit_transform(datas.iloc[:,0])
+print(countries)
+
+# polynominal kategorik verinin ayrı değişkenler gibi true - false gibi ayrı sütunlara dönüştürülmesi
+ohe = preprocessing.OneHotEncoder()
+countries = ohe.fit_transform(countries).toarray()
+print(countries)
+
