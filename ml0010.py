@@ -96,5 +96,30 @@ x_train2, x_test2, y_train2, y_test2 = train_test_split(veri, boy,test_size=0.33
 regressor2 = LinearRegression()
 regressor2.fit(x_train2,y_train2)
 y_pred2 = regressor2.predict(x_test2)
-print(y_test2)
-print(y_pred2)
+# print(y_test2)
+# print(y_pred2)
+
+# Doğru değikenleri mi alıyoruz? Tümünü almalı mıyız?
+# Backward Elimination - Geri Eleme
+import statsmodels.api as sm
+# Lineer Regression'da doğru modelindeki sabiti herbir satır için 1 olarak ekledik.
+X = np.append(arr = np.ones((22,1)).astype(int), values=veri, axis=1)
+# print(X)
+
+X_1 = veri.iloc[:,[0,1,2,3,4,5]].values
+X_1 = np.array(X_1,dtype=float)
+model = sm.OLS(boy,X_1).fit()
+print(model.summary())
+
+# p value'su en yüksek x5 olduğundan x5'i kaldır
+X_1 = veri.iloc[:,[0,1,2,3,5]].values
+X_1 = np.array(X_1,dtype=float)
+model = sm.OLS(boy,X_1).fit()
+print(model.summary())
+
+# p value'su en yüksek son sütun olduğundan son sütunu kaldır
+X_1 = veri.iloc[:,[0,1,2,3]].values
+X_1 = np.array(X_1,dtype=float)
+model = sm.OLS(boy,X_1).fit()
+print(model.summary())
+
