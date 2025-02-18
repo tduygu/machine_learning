@@ -123,3 +123,11 @@ X_1 = np.array(X_1,dtype=float)
 model = sm.OLS(boy,X_1).fit()
 print(model.summary())
 
+
+veri2 = veri.iloc[:,:4]
+x_train3, x_test3, y_train3, y_test3 = train_test_split(veri2, boy,test_size=0.33,random_state=0)
+regressor3 = LinearRegression()
+regressor3.fit(x_train3,y_train3)
+y_pred3 = regressor3.predict(x_test3)
+print(y_test3)
+print(y_pred3)
