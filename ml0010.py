@@ -70,13 +70,20 @@ print(s2)
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(s, result3,test_size=0.33,random_state=0)
 # veriyi 4'e böldük.
-print(x_train)
-print(y_train)
-print(x_test)
-print(y_test)
+# print(x_train)
+# print(y_train)
+# print(x_test)
+# print(y_test)
 
 # 2.7 öz nitelik ölçekleme
 # from sklearn.preprocessing import StandardScaler
 # sc=StandardScaler()
 # X_train = sc.fit_transform(x_train)
 # X_test = sc.fit_transform(x_test)
+
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(x_train,y_train)
+y_pred = regressor.predict(x_test)
+
+
