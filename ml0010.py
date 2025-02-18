@@ -85,5 +85,16 @@ from sklearn.linear_model import LinearRegression
 regressor = LinearRegression()
 regressor.fit(x_train,y_train)
 y_pred = regressor.predict(x_test)
+#print(y_pred)
 
-
+# boy kolonunu sonuc degeri olarak tahmin etmek üzere veri düzenlemesi
+boy = s2.iloc[:,3:4].values
+sol =s2.iloc[:,:3]
+sag = s2.iloc[:,4:]
+veri = pd.concat([sol,sag], axis=1)
+x_train2, x_test2, y_train2, y_test2 = train_test_split(veri, boy,test_size=0.33,random_state=0)
+regressor2 = LinearRegression()
+regressor2.fit(x_train2,y_train2)
+y_pred2 = regressor2.predict(x_test2)
+print(y_test2)
+print(y_pred2)
