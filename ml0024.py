@@ -4,7 +4,7 @@ from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, classification_report, make_scorer
 from sklearn.naive_bayes import CategoricalNB
