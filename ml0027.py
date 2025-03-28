@@ -20,6 +20,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # ID3 Algoritması (Entropy kullanarak)
 clf = DecisionTreeClassifier(criterion="entropy")
+# clf = DecisionTreeClassifier(criterion="gini", max_depth=3)
 clf.fit(X_train, y_train)
 
 # Modeli değerlendirme

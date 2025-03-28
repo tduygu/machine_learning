@@ -15,7 +15,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 df = pd.read_csv('files/winequality-red.csv')
 
 # 'quality' özelliğini kategorik hale getirme
-df['quality_category'] = df['quality'].apply(lambda x: 1 if x >= 7 else 0)
+df['quality_category'] = df['quality'].apply(lambda x: 1 if x >= 4 else 0)
 
 # Güncellenmiş veri setini görüntüleme
 print(df[['quality', 'quality_category']].head())
