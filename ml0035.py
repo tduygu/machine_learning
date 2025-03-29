@@ -37,6 +37,10 @@ plt.figure(figsize=(20,10))
 plot_tree(clf, feature_names=data.columns[1:], class_names=["edible", "poisonous"], filled=True)
 plt.show()
 
+conf_matrix = confusion_matrix(y_test, y_pred)
+print(conf_matrix)
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
 y_prob = clf.predict_proba(X_test)[:, 1]
 # ROC eğrisini çizme
 fpr, tpr, _ = roc_curve(y_test, y_prob)

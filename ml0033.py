@@ -1,4 +1,4 @@
-# *** ödev 5
+# *** ödev 5 yapılan
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -15,6 +15,7 @@ data = pd.read_csv("files/anxiety_depression_data.csv")
 
 # 'Life_Satisfaction_Score' özelliğini kategorik hale getirme
 data['Life_Satisfaction_Score'] = data['Life_Satisfaction_Score'].apply(lambda x: 1 if x >= 7 else 0)
+# data["Satisfied"] = (data["Life_Satisfaction_Score"] >= 7).astype(int)
 
 # missing values var mı?
 missing_values = data.isnull().sum()
@@ -42,34 +43,42 @@ categorical_columns_with_na = [col for col in data.select_dtypes(include=['objec
 
 # Kategorik sütunlardaki eksik değerleri makine öğrenmesi ile doldurma
 if categorical_columns_with_na:
-    data[categorical_columns_with_na] = data[categorical_columns_with_na].fillna("Bilinmiyor")
-    # imputer = SimpleImputer(strategy="most_frequent")
-    # data[categorical_columns_with_na] = imputer.fit_transform(data[categorical_columns_with_na])
+    # data[categorical_columns_with_na] = data[categorical_columns_with_na].fillna("Bilinmiyor")
+    imputer = SimpleImputer(strategy="most_frequent")
+    data[categorical_columns_with_na] = imputer.fit_transform(data[categorical_columns_with_na])
 
 
 # veri dengeli mi?
 # Hedef sütundaki sınıf dağılımını kontrol et
 class_counts = data['Life_Satisfaction_Score'].value_counts()
+# class_counts = data['Satisfied'].value_counts()
 #
 # # Yüzdelik oranlarını göster
 class_percentages = data['Life_Satisfaction_Score'].value_counts(normalize=True) * 100
+# class_percentages = data['Satisfied'].value_counts(normalize=True) * 100
 # #
 # Sonuçları yazdır
 print("Sınıf Dağılımı:\n", class_counts)
 print("\nSınıf Dağılımı (%)\n", class_percentages)
 
 
-
+## Kategorik değişkenleri sayısal formata çevirme
+# bu one hot encoding kullanıyor - desicion tree için label encoder daha iyi olabilir
+# X = pd.get_dummies(X)
+label_encoder = LabelEncoder()
+for col in data.select_dtypes(include=['object']).columns:
+    print(col)
+    data[col] = label_encoder.fit_transform(data[col])
 
 # Özellikler ve hedef değişkeni ayırma
 # Hedef değişken (sondan ikinci sütun) Life_Satisfaction_Score
 # y = data.iloc[:, -2]
 y = data['Life_Satisfaction_Score']
+# y = data['Satisfied']
 # Bağımsız değişkenler (hedef değişken ve son sütun hariç tüm sütunlar)
-X = data.drop(columns=data.columns[-2])
+# X = data.drop(columns=data.columns[-2])
 # X = data.drop(['Medication_Use','Substance_Use','Life_Satisfaction_Score'], axis=1)
-# X = data.drop(['Life_Satisfaction_Score'], axis=1)
-
+X = data.drop(['Life_Satisfaction_Score'], axis=1)
 
 
 
@@ -78,30 +87,46 @@ X = data.drop(columns=data.columns[-2])
 # print("y şekli:", y.shape)
 # print("data sekli:", data.shape)
 
-## Kategorik değişkenleri sayısal formata çevirme
-# bu one hot encoding kullanıyor - desicion tree için label encoder daha iyi olabilir
-# X = pd.get_dummies(X)
-label_encoder = LabelEncoder()
-for col in X.select_dtypes(include=['object']).columns:
-    print(col)
-    X[col] = label_encoder.fit_transform(X[col])
+
 
 
 
 # smote = SMOTE(random_state=42)
 # X_resampled, y_resampled = smote.fit_resample(X, y)
+
+
+
+# class_counts = y_resampled.value_counts()
+# #
+# # # Yüzdelik oranlarını göster
+# class_percentages = y_resampled.value_counts(normalize=True) * 100
+# # #
+# # Sonuçları yazdır
+# print("After Resampled")
+# print("Sınıf Dağılımı:\n", class_counts)
+# print("\nSınıf Dağılımı (%)\n", class_percentages)
+
+
 # Eğitim ve test verilerine ayırma
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 # X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
-#
+
+
 # Decision Tree Modeli (CART kullanarak)
 # clf = DecisionTreeClassifier(criterion="gini")
-# clf = DecisionTreeClassifier(criterion="entropy")
+# clf = DecisionTreeClassifier(criterion="entropy", max_depth=3)
 clf = DecisionTreeClassifier(criterion="gini", max_depth=3)
 clf.fit(X_train, y_train)
-# #
+
 # # # Modeli değerlendirme
 y_pred = clf.predict(X_test)
+# #
+
+# from sklearn.ensemble import RandomForestClassifier
+# rfc = RandomForestClassifier(n_estimators=10, criterion='gini')
+# rfc.fit(X_train, y_train)
+# y_pred = rfc.predict(X_test)
+
 print("Accuracy:", accuracy_score(y_test, y_pred))
 
 #
@@ -126,11 +151,18 @@ print("Classification Report:\n", classification_report(y_test, y_pred))
 fpr, tpr, thresholds = roc_curve(y_test, clf.predict_proba(X_test)[:, 1])
 roc_auc = auc(fpr, tpr)
 
+# # ROC eğrisini çizme - RandomForest için
+# fpr, tpr, thresholds = roc_curve(y_test, rfc.predict_proba(X_test)[:, 1])
+# roc_auc = auc(fpr, tpr)
+
+
 plt.figure(figsize=(8, 6))
-plt.plot(fpr, tpr, color='blue', label=f'Karar Ağacı (Decision Tree) \n Gini (AUC = {roc_auc:.2f})')
+# plt.plot(fpr, tpr, color='blue', label=f'Karar Ağacı (Decision Tree) \n Gini (AUC = {roc_auc:.2f})')
+plt.plot(fpr, tpr, color='blue', label=f'Random Forest (AUC = {roc_auc:.2f})')
 plt.plot([0, 1], [0, 1], color='gray', linestyle='--')
 # plt.title('Receiver Operating Characteristic (ROC) Curve')
-plt.title('Kaygı ve Depresyon Ruh Sağlığı Faktörleri Veri Seti için ROC Eğrisi')
+# plt.title('Kaygı ve Depresyon Ruh Sağlığı Faktörleri Veri Seti için ROC Eğrisi')
+plt.title('Kaygı ve Depresyon Ruh Sağlığı Faktörleri Veri Seti için ROC Eğrisi \n Random Forest')
 plt.xlabel('False Positive Rate (FPR)')
 plt.ylabel('True Positive Rate (TPR)')
 plt.legend(loc='lower right')
